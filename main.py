@@ -2,6 +2,7 @@ import os
 import time
 from books import Book
 from books import Book_Manager
+from books import Book_Recommendation
 
 
 def clear_screen():

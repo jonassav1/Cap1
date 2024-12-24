@@ -17,4 +17,30 @@ class Book:
         return f"Title: {self.title}, Author: {self.author}, Rating: {self.rating}, Genre: {self.genre}"
 
 
-class Book_Manager: ...
+def check_book_file(): ...
+
+
+class Book_Manager:
+    def __init__(self):
+        pass
+
+    def view_books():
+        pass
+
+    def add_books():
+        pass
+
+    def remove_books():
+        pass
+
+
+class Book_Recommendation:
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.book = []
+
+    def get_book_recommendation_from_api(): ...
+
+    def view_book_recommendation(): ...
+
+    def save_book_recommendation(): ...
