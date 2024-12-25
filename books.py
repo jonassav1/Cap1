@@ -29,7 +29,14 @@ def check_book_file():
         return "\nCurrently there are no books in a file.\n"
     except FileNotFoundError:
         return "\nCurrently there are no books in a file.\n"
-
+    
+def save_books_to_file(data):
+    try:
+        with open ("collection.csv", "a", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(data)
+    except Exception as e:
+        print(f"\nAn error occured while trying to save books to the file {e}")
 
 class Book_Manager:
     def __init__(self):
@@ -39,7 +46,7 @@ class Book_Manager:
         check = check_book_file()
         print(f"{check}")
 
-    def add_books(self): ...
+    def add_books(self): ... #cia bus galima sudeti knyga kokia nori tada pasiusim zinute i book class kad bam knyga sudeta jei values gauna taisyklingai jas sudes i reikiamas vietas ir gausim tada saugoti jas i faila
 
     def remove_books(self):
         check = check_book_file()
