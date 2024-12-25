@@ -1,6 +1,6 @@
 import os
 import time
-from books import Book
+from books import Book_Search
 from books import Book_Manager
 from books import Book_Recommendation
 
@@ -42,6 +42,9 @@ def main():
             elif selection == 4:
                 ...
             elif selection == 5:
+                search = Book_Search
+                ...
+            elif selection == 6:
                 print(
                     "\nExiting the program! Thanks for using book recommendation and management tool!"
                 )

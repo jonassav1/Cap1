@@ -56,3 +56,7 @@ class Book_Recommendation:
     def view_book_recommendation(): ...
 
     def save_book_recommendation(): ...
+
+class Book_Search:
+    def __init__(self):
+        pass
