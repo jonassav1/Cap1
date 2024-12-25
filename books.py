@@ -2,14 +2,13 @@ import requests
 from dotenv import load_dotenv
 import os
 import csv
-import time
 
 load_dotenv()
 api_key = os.getenv("my_key")
 
 
 class Book:
-    def init(self, title, author, rating, genre):
+    def __init__(self, title, author, rating, genre):
         self.title = title
         self.author = author
         self.rating = rating
