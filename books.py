@@ -2,6 +2,7 @@ import requests
 from dotenv import load_dotenv
 import os
 import csv
+import random
 
 load_dotenv()
 api_key = os.getenv("my_key")
@@ -39,6 +40,18 @@ def save_books_to_file(data):
     except Exception as e:
         print(f"\nAn error occured while trying to save books to the file {e}")
 
+def generate_ids():
+    existing_ids = []
+    try:
+        with open("collection.csv", "r", newline="") as f:
+                reader = csv.reader(f)
+                for row in reader:
+                    existing_ids.append(int(row[0]))
+        random_id = random.randint(1,1000)
+        if random_id not in existing_ids:
+            return random_id
+    except FileNotFoundError:
+        return 1
 
 class Book_Manager:
     def __init__(self):
@@ -65,7 +78,7 @@ class Book_Manager:
                     )
 
     def add_books(self):
-        id = len(self.books) + 1
+        id = generate_ids()
         title = input("\nEnter book title: ")
         author = input("\nEnter book author: ")
         genre = input("\nEnter book genre: ")
@@ -87,8 +100,25 @@ class Book_Manager:
 
     def remove_books(self):
         check = check_book_file()
-        print(check)
-
+        if check == True:
+            try:
+                book_to_remove = int(input("\nEnter ID of the book you would like to delete: "))
+            except ValueError:
+                print("\nInvalid input! Enter a number ID.")
+                self.remove_books()
+            updated_books = []
+            with open("collection.csv", "r", newline="") as f:
+                reader = csv.reader(f)
+                for row in reader:
+                    if int(row[0]) != book_to_remove:
+                        updated_books.append(row)
+            if len(updated_books) == len(self.books):
+                        print("\nNo book found with entered ID.")
+            else: 
+                with open("collection.csv", "w", newline="") as f:
+                    writer = csv.writer(f)
+                    writer.writerows(updated_books)
+                    print(f"\nBook with ID {book_to_remove} has been deleted from the collection.")
 
 class Book_Recommendation:
     def __init__(self, api_key):
