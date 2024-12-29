@@ -29,7 +29,7 @@ def main():
             selection = int(
                 input("\nEnter a number of an option of what you would like to do: ")
             )
-            clear_screen()
+            # clear_screen()
             if selection == 1:
                 view = Book_Manager()
                 view.view_books()
@@ -42,9 +42,6 @@ def main():
             elif selection == 4:
                 ...
             elif selection == 5:
-                search = Book_Search
-                ...
-            elif selection == 6:
                 print(
                     "\nExiting the program! Thanks for using book recommendation and management tool!"
                 )
