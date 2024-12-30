@@ -1,11 +1,8 @@
 import requests
-from dotenv import load_dotenv
 import os
 import csv
 import random
-
-load_dotenv()
-api_key = os.getenv("my_key")
+import json
 
 
 class Book:
@@ -27,9 +24,11 @@ def check_book_file():
             for row in reader:
                 if row:
                     return True
-        return "\nCurrently there are no books in a file.\n"
+        print("\nCurrently there are no books in a file.\n")
+        return False
     except FileNotFoundError:
-        return "\nCurrently there are no books in a file.\n"
+        print("\nCurrently there are no books in a file.\n")
+        return False
 
 
 def save_books_to_file(data):
@@ -54,6 +53,7 @@ def generate_ids():
     except FileNotFoundError:
         return 1
 
+
 class Book_Manager:
     def __init__(self):
         self.books = []
@@ -77,6 +77,7 @@ class Book_Manager:
 
     def view_books(self):
         check = check_book_file()
+
         if check == True:
             for book in self.books:
                 print(book)
@@ -140,13 +141,57 @@ class Book_Manager:
                         f"\nBook with ID {book_to_remove} has been deleted from the collection."
                     )
 
+
 class Book_Recommendation:
     def __init__(self, api_key):
         self.api_key = api_key
-        self.book = []
+        self.recommended_books = []
 
-    def get_book_recommendation_from_api(): ...
+    def get_book_recommendation_menu(self):
+        try:
+            selection = int(
+                input(
+                    "\nWould you like to search get book recommendation by author(1) or genre(2)?"
+                )
+            )
+            if selection == 1:
+                self.get_book_recommendation_from_api_author()
+            elif selection == 2:
+                self.get_book_recommendation_from_api_genre()
+            else:
+                print("\nYou entered invalid number. Please try again.")
+                return self.get_book_recommendation_menu()
+        except ValueError:
+            print("\nYou entered invalid number. Please try again.")
+            return self.get_book_recommendation_menu()
 
-    def view_book_recommendation(): ...
+    def get_book_recommendation_from_api_genre(self, max_results=3):
+        genre = input("\nEnter the genre: ").strip()
+        try:
+            response = requests.get(
+                f"https://www.googleapis.com/books/v1/volumes?q=subject:{genre}&maxResults={max_results}&key={self.api_key}"
+            )
+            response.raise_for_status()
+            info = response.json()
+            if "items" in info:
+                print("\nHere are the book recommendations: ")
+                for item in info["items"]:
+                    volume_info = item["volumeInfo"]
+                    title = volume_info.get("title")
+                    authors = volume_info.get("authors")
+                    genres = volume_info.get("categories")[0]
+                    rating = volume_info.get("averageRating", None)
+                    if rating is None:
+                        continue
+                    print(f"\nTitle: {title}")
+                    print(f"Author: {', '.join(authors)}")
+                    print(f"Genre: {genres}")
+                    print(f"Rating: {rating}")
+            else:
+                print("\nNo books found in this genre.")
+        except requests.exceptions.RequestException as e:
+            print(f"\nError fetchiing books by author: {e}")
 
-    def save_book_recommendation(): ...
+    def get_book_recommendation_from_api_author(self, max_results=3): ...
+
+    def save_book_recommendation(self, title, author, genre, rating): ...

@@ -1,7 +1,11 @@
 import os
 import time
+from dotenv import load_dotenv
 from books import Book_Manager
 from books import Book_Recommendation
+
+load_dotenv()
+api_key = os.getenv("my_key")
 
 
 def clear_screen():
@@ -39,7 +43,8 @@ def main():
                 remove = Book_Manager()
                 remove.remove_books()
             elif selection == 4:
-                ...
+                recom = Book_Recommendation(api_key)
+                recom.get_book_recommendation_menu()
             elif selection == 5:
                 print(
                     "\nExiting the program! Thanks for using book recommendation and management tool!"
