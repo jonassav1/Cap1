@@ -145,13 +145,12 @@ class Book_Manager:
 class Book_Recommendation:
     def __init__(self, api_key):
         self.api_key = api_key
-        self.recommended_books = []
 
     def get_book_recommendation_menu(self):
         try:
             selection = int(
                 input(
-                    "\nWould you like to search get book recommendation by author(1) or genre(2)?"
+                    "\nWould you like to search get book recommendation by author(1) or genre(2)? "
                 )
             )
             if selection == 1:
@@ -179,7 +178,8 @@ class Book_Recommendation:
                     volume_info = item["volumeInfo"]
                     title = volume_info.get("title")
                     authors = volume_info.get("authors")
-                    genres = volume_info.get("categories")[0]
+                    categories = volume_info.get("categories", ["Unknown Genre"])
+                    genres = categories[0]
                     rating = volume_info.get("averageRating", None)
                     if rating is None:
                         continue
@@ -187,11 +187,89 @@ class Book_Recommendation:
                     print(f"Author: {', '.join(authors)}")
                     print(f"Genre: {genres}")
                     print(f"Rating: {rating}")
+                    while True:
+                        save = input(
+                            "\nWould you like to save these books in your list yes/no? "
+                        ).lower()
+                        if save in ("yes", "no"):
+                            break
+                        else:
+                            print("\nInvalid input please enter yes or no.")
+                    if save == "yes":
+                        id = generate_ids()
+                        formatted_authors = ", ".join(authors)
+                        new_book = Book(
+                            book_id=id,
+                            title=title,
+                            author=formatted_authors,
+                            rating=rating,
+                            genre=genre,
+                        )
+                        save_books_to_file(
+                            [
+                                new_book.id,
+                                new_book.title,
+                                new_book.author,
+                                new_book.rating,
+                                new_book.genre,
+                            ]
+                        )
+                        print("\n\nBook has been added to file!")
             else:
                 print("\nNo books found in this genre.")
         except requests.exceptions.RequestException as e:
             print(f"\nError fetchiing books by author: {e}")
 
-    def get_book_recommendation_from_api_author(self, max_results=3): ...
-
-    def save_book_recommendation(self, title, author, genre, rating): ...
+    def get_book_recommendation_from_api_author(self, max_results=5):
+        author_input = input("\nEnter the author: ")
+        try:
+            response = requests.get(
+                f"https://www.googleapis.com/books/v1/volumes?q=inauthor:{author_input}&maxResults={max_results}&key={self.api_key}"
+            )
+            response.raise_for_status()
+            info = response.json()
+            if "items" in info:
+                print("\nHere are the book recommendations: ")
+                for item in info["items"]:
+                    volume_info = item["volumeInfo"]
+                    title = volume_info.get("title")
+                    authors = volume_info.get("authors")
+                    categories = volume_info.get("categories", ["Unknown Genre"])
+                    genres = categories[0]
+                    rating = volume_info.get("averageRating", "No rating available")
+                    print(f"\nTitle: {title}")
+                    print(f"Author: {authors}")
+                    print(f"Genre: {genres}")
+                    print(f"Rating: {rating}")
+                    while True:
+                        save = input(
+                            "\nWould you like to save these books in your list yes/no? "
+                        ).lower()
+                        if save in ("yes", "no"):
+                            break
+                        else:
+                            print("\nInvalid input please enter yes or no.")
+                    if save == "yes":
+                        id = generate_ids()
+                        formatted_authors = ", ".join(authors)
+                        new_book = Book(
+                            book_id=id,
+                            title=title,
+                            author=formatted_authors,
+                            rating=rating,
+                            genre=genres,
+                        )
+                        save_books_to_file(
+                            [
+                                new_book.id,
+                                new_book.title,
+                                new_book.author,
+                                new_book.rating,
+                                new_book.genre,
+                            ]
+                        )
+                        print("\n\nBook has been added to file!")
+            else:
+                print("\nNo books found in this genre.")
+        except requests.exceptions.RequestException as e:
+            print(f"\nError fetchiing books by author: {e}")

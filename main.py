@@ -32,7 +32,7 @@ def main():
             selection = int(
                 input("\nEnter a number of an option of what you would like to do: ")
             )
-            # clear_screen()
+            clear_screen()
             if selection == 1:
                 view = Book_Manager()
                 view.view_books()

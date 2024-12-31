@@ -11,5 +11,5 @@
 
 
 2. Book recommendations:
-    - Get book recommendations based on genre, author or rating.
+    - Get book recommendations based on genre, author.
     - By using google book API
