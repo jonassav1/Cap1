@@ -1,8 +1,7 @@
 import requests
-import os
 import csv
 import random
-import json
+import re
 
 
 class Book:
@@ -52,6 +51,14 @@ def generate_ids():
             return random_id
     except FileNotFoundError:
         return 1
+
+
+def genre_check(genre):
+    patern = r"^[a-zA-Z\s\-]+$"
+    if re.match(patern, genre):
+        return True
+    else:
+        return False
 
 
 class Book_Manager:
@@ -166,6 +173,9 @@ class Book_Recommendation:
 
     def get_book_recommendation_from_api_genre(self, max_results=3):
         genre = input("\nEnter the genre: ").strip()
+        if genre_check(genre) == False:
+            print("\nEnter a genre please.")
+            return self.get_book_recommendation_from_api_genre()
         try:
             response = requests.get(
                 f"https://www.googleapis.com/books/v1/volumes?q=subject:{genre}&maxResults={max_results}&key={self.api_key}"
@@ -222,6 +232,9 @@ class Book_Recommendation:
 
     def get_book_recommendation_from_api_author(self, max_results=5):
         author_input = input("\nEnter the author: ")
+        if not author_input:
+            print("\nInvalid input enter authors name.")
+            return self.get_book_recommendation_from_api_author()
         try:
             response = requests.get(
                 f"https://www.googleapis.com/books/v1/volumes?q=inauthor:{author_input}&maxResults={max_results}&key={self.api_key}"
