@@ -46,9 +46,10 @@ def generate_ids():
             reader = csv.reader(f)
             for row in reader:
                 existing_ids.append(int(row[0]))
-        random_id = random.randint(1, 1000)
-        if random_id not in existing_ids:
-            return random_id
+        while True:
+            random_id = random.randint(1, 1000)
+            if random_id not in existing_ids:
+                return random_id
     except FileNotFoundError:
         return 1
 
@@ -157,7 +158,7 @@ class Book_Recommendation:
         try:
             selection = int(
                 input(
-                    "\nWould you like to search get book recommendation by author(1) or genre(2)? "
+                    "\nWould you like to search get book recommendation by author (1) or genre (2)? "
                 )
             )
             if selection == 1:
@@ -190,9 +191,7 @@ class Book_Recommendation:
                     authors = volume_info.get("authors")
                     categories = volume_info.get("categories", ["Unknown Genre"])
                     genres = categories[0]
-                    rating = volume_info.get("averageRating", None)
-                    if rating is None:
-                        continue
+                    rating = volume_info.get("averageRating", "No rating available")
                     print(f"\nTitle: {title}")
                     print(f"Author: {', '.join(authors)}")
                     print(f"Genre: {genres}")
@@ -228,7 +227,7 @@ class Book_Recommendation:
             else:
                 print("\nNo books found in this genre.")
         except requests.exceptions.RequestException as e:
-            print(f"\nError fetchiing books by author: {e}")
+            print(f"\nError fetchiing books by genre: {e}")
 
     def get_book_recommendation_from_api_author(self, max_results=5):
         author_input = input("\nEnter the author: ")
@@ -251,7 +250,7 @@ class Book_Recommendation:
                     genres = categories[0]
                     rating = volume_info.get("averageRating", "No rating available")
                     print(f"\nTitle: {title}")
-                    print(f"Author: {authors}")
+                    print(f"Author: {', '.join(authors)}")
                     print(f"Genre: {genres}")
                     print(f"Rating: {rating}")
                     while True:
